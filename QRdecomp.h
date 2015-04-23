@@ -1,3 +1,6 @@
+#ifndef QR_H
+#define QR_H
+
 #include "nrutil.h"
 #include <cmath>
 #include <cstdio>
@@ -124,3 +127,5 @@ void qrdcmp(float **a, int n, float *c,float *d,int* sing)
 	d[n] = a[n][n];
 	if (d[n] == 0.0) *sing = 1;
 }
+
+#endif
