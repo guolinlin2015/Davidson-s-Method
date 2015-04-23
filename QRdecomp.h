@@ -1,56 +1,80 @@
 #include "nrutil.h"
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cmath>
+#include <cstdio>
+#include <cstdlib>
+#include <string>
+#include <cassert>
+#include <vector>
 
+using namespace std;
 /*
-routine of allocate matrix of m * n
+routine of allocate matrix of m * n, 
+if flag = true,row major layout
+if flag = false, column major layout 
 */
-float** fmatrix(int m,int n)
+vector<vector<float> > fmatrix(int m,int n,bool flag=true)
 {
 	int i;
-	float** matrix = (float**)malloc(sizeof(float*)*(m+1));
-	for(i=0;i<=m;i++){
-		matrix[i] = (float*)malloc(sizeof(float)*(n+1));
-		memset((void*)matrix[i],0,sizeof(float)*(n+1));		
+	vector<vector<float> > matrix;
+	int majorD,minorD;
+	if(flag){
+		majorD = m;
+		minorD = n;
 	}
+	else{
+		majorD = n;
+		minorD = m;
+	}
+	for(i=0;i<majorD;i++){
+		vector<float> row(minorD,0.0);
+		matrix.push_back(row);
+	}		
+
 	return matrix;
 }
 
 /*
 routine of allocate vector is 1...n
 */
-float* fvector(int n)
+vector<float> fvector(int n)
 {
-	float* v = (float*)malloc(sizeof(float)*(n+1));
-	memset((void*)v,0,sizeof(float)*(n+1));
+	vector<float> v(n,0.0);
 	return v;
+}
+
+vector<vector<float> > eye(int m,int n)
+{
+	int i;
+	vector<vector<float> > matrix = fmatrix(m,n,false);
+	assert(m>n);
+	for(i=0;i<n;i++)
+		matrix[i][i] = 1;
+	return matrix;
 }
 
 /*
 Gram-Schmidt Orthogonalization process
 */
-void orthogonal(float **a,float *c,int m,int n)
+void orthogonal(vector<vector<float> > a,vector<float> c,int m,int n)
 {
 	int i,j,k;
 	float sum = 0.0,scale,dotProduct;
-	for(i=1;i<=n;i++){
-		for(j=1;j<=m;j++)
+	for(i=0;i<n;i++){
+		for(j=0;j<m;j++)
 			c[j] = a[i][j];
-		for(j=i-1;j>=1;j--)
+		for(j=i-1;j>=0;j--)
 		{
 			dotProduct = 0.0;
-			for(k=1;k<=m;k++)
+			for(k=0;k<m;k++)
 				dotProduct+= c[k]*a[j][k];
-			for(k=1;k<=m;k++)
+			for(k=0;k<m;k++)
 				a[i][k] -= (dotProduct * a[j][k]);
 		}
 		sum = 0.0;
-		for(j=1;j<=m;j++)
+		for(j=0;j<m;j++)
 			sum += a[i][j]*a[i][j];
 		scale = sqrtf(sum);
-		for(j=1;j<=m;j++)
+		for(j=0;j<m;j++)
 			a[i][j] = a[i][j]/scale;
 	}
 	return;
