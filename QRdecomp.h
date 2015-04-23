@@ -1,5 +1,60 @@
 #include "nrutil.h"
 #include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+/*
+routine of allocate matrix of m * n
+*/
+float** fmatrix(int m,int n)
+{
+	int i;
+	float** matrix = (float**)malloc(sizeof(float*)*(m+1));
+	for(i=0;i<=m;i++){
+		matrix[i] = (float*)malloc(sizeof(float)*(n+1));
+		memset((void*)matrix[i],0,sizeof(float)*(n+1));		
+	}
+	return matrix;
+}
+
+/*
+routine of allocate vector is 1...n
+*/
+float* fvector(int n)
+{
+	float* v = (float*)malloc(sizeof(float)*(n+1));
+	memset((void*)v,0,sizeof(float)*(n+1));
+	return v;
+}
+
+/*
+Gram-Schmidt Orthogonalization process
+*/
+void orthogonal(float **a,float *c,int m,int n)
+{
+	int i,j,k;
+	float sum = 0.0,scale,dotProduct;
+	for(i=1;i<=n;i++){
+		for(j=1;j<=m;j++)
+			c[j] = a[i][j];
+		for(j=i-1;j>=1;j--)
+		{
+			dotProduct = 0.0;
+			for(k=1;k<=m;k++)
+				dotProduct+= c[k]*a[j][k];
+			for(k=1;k<=m;k++)
+				a[i][k] -= (dotProduct * a[j][k]);
+		}
+		sum = 0.0;
+		for(j=1;j<=m;j++)
+			sum += a[i][j]*a[i][j];
+		scale = sqrtf(sum);
+		for(j=1;j<=m;j++)
+			a[i][j] = a[i][j]/scale;
+	}
+	return;
+}
 
 /*
 Constructs the QR decomposition of a[1..n][1..n]. 
@@ -11,7 +66,7 @@ while the nonzero components are returned in a[i][j] for i = j, . . . , n.
 sing returns as true (1) if singularity is encountered during the decomposition, 
 but the decomposition is still completed in this case; otherwise it returns false (0).
 */
-void qrdcmp(float **a, int n, float *c,float *d,int *sing)
+void qrdcmp(float **a, int n, float *c,float *d,int* sing)
 {
 	int i,j,k;
 	float scale,sigma,sum,tau;
