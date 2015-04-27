@@ -4,7 +4,7 @@
 #include "QRdecomp.h"
 #include "mvutil.h"
 #include "eigen.h"
-#include "nrutil.h"
+#include "mynrutil.h"
 
 int main(int argc,const char* argv[])
 {

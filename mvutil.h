@@ -1,7 +1,7 @@
 #ifndef MVUTIL_H
 #define MVUTIL_H
 
-#include "nrutil.h"
+#include "mynrutil.h"
 #include <iostream>
 #include <cstdio>
 #include <cstdlib>

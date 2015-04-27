@@ -8,7 +8,7 @@ Univ. Press) by W.H. Press, S.A. Teukolsky, W.T. Vetterling, and B.P. Flannery
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include "nrutil.h"
+#include "mynrutil.h"
 
 #define NR_END 1
 #define SIGN(a,b) ((b) >= 0.0 ? fabs(a) : -fabs(a))
@@ -97,7 +97,7 @@ on output, the normalized eigenvectors of a. nrot returns the number of Jacobi r
 			z[ip] = 0.0;
 		}
 	}
-	nrerror("Too many iterations in routine jacobi");
+	nrerror((char*)"Too many iterations in routine jacobi");
 }
 
 /******************************************************************************/
