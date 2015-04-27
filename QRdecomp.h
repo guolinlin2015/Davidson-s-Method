@@ -7,77 +7,42 @@
 #include <cstdlib>
 #include <string>
 #include <cassert>
-#include <vector>
 
-using namespace std;
-/*
-routine of allocate matrix of m * n, 
-if flag = true,row major layout
-if flag = false, column major layout 
-*/
-vector<vector<float> > fmatrix(int m,int n,bool flag=true)
+
+float **eye(long nrl,long nrh,long ncl, long nch)
 {
-	int i;
-	vector<vector<float> > matrix;
-	int majorD,minorD;
-	if(flag){
-		majorD = m;
-		minorD = n;
-	}
-	else{
-		majorD = n;
-		minorD = m;
-	}
-	for(i=0;i<majorD;i++){
-		vector<float> row(minorD,0.0);
-		matrix.push_back(row);
-	}		
-
-	return matrix;
-}
-
-/*
-routine of allocate vector is 1...n
-*/
-vector<float> fvector(int n)
-{
-	vector<float> v(n,0.0);
-	return v;
-}
-
-vector<vector<float> > eye(int m,int n)
-{
-	int i;
-	vector<vector<float> > matrix = fmatrix(m,n,false);
-	assert(m>n);
-	for(i=0;i<n;i++)
-		matrix[i][i] = 1;
-	return matrix;
+	long i;
+	float **m = matrix(nrl,nrh,ncl,nch);
+	long nrow = nrh-nrl +1,ncol = nch-ncl +1;
+	assert(nrow>=ncol);
+	for(i=ncl;i<=nch;i++)
+		m[i][i] = 1.0;
+	return m;
 }
 
 /*
 Gram-Schmidt Orthogonalization process
 */
-void orthogonal(vector<vector<float> > a,vector<float> c,int m,int n)
+void orthogonal(float **a,float *c,long nrl,long nrh,long ncl,long nch)
 {
-	int i,j,k;
+	long i,j,k;
 	float sum = 0.0,scale,dotProduct;
-	for(i=0;i<n;i++){
-		for(j=0;j<m;j++)
-			c[j] = a[i][j];
-		for(j=i-1;j>=0;j--)
+	for(j=ncl;j<=nch;j++){
+		for(i=nrl;i<=nrh;i++)
+			c[i] = a[i][j];
+		for(i=j-1;i>=ncl;i--)
 		{
 			dotProduct = 0.0;
-			for(k=0;k<m;k++)
-				dotProduct+= c[k]*a[j][k];
-			for(k=0;k<m;k++)
-				a[i][k] -= (dotProduct * a[j][k]);
+			for(k=nrl;k<=nrh;k++)
+				dotProduct+= c[k]*a[k][i];
+			for(k=nrl;k<=nrh;k++)
+				a[k][j] -= (dotProduct * a[k][i]);
 		}
 		sum = 0.0;
-		for(j=0;j<m;j++)
+		for(i=nrl;i<=nrh;i++)
 			sum += a[i][j]*a[i][j];
 		scale = sqrtf(sum);
-		for(j=0;j<m;j++)
+		for(i=nrl;i<=nrh;i++)
 			a[i][j] = a[i][j]/scale;
 	}
 	return;
